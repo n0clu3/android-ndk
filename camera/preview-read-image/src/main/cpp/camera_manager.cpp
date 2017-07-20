@@ -163,7 +163,7 @@ class DisplaySize {
 /*
  * find a compatible camera modes:
  *    1) the same aspect ration as the native display window, which should be a
- *       rotated version of the phisical device
+ *       rotated version of the physical device
  *    2) the smallest resolution in the camera mode list
  * This to minimize the later Color space conversion workload.
  */

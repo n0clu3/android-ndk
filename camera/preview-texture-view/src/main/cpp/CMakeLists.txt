@@ -20,21 +20,19 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 set(COMMON_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../../../../common)
 
 # now build app's shared lib
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror")
+
+# Export ANativeActivity_onCreate(),
+# Refer to: https://github.com/android-ndk/ndk/issues/381.
+set(CMAKE_SHARED_LINKER_FLAGS
+    "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 add_library(camera_view SHARED
-            ${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp
-            ${COMMON_SOURCE_DIR}/utils/camera_manager.cpp
-            ${COMMON_SOURCE_DIR}/utils/camera_utils.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp
+    ${COMMON_SOURCE_DIR}/utils/camera_manager.cpp
+    ${COMMON_SOURCE_DIR}/utils/camera_utils.cpp)
 
 # add include path
-target_include_directories(camera_view PRIVATE
-                           ${COMMON_SOURCE_DIR})
+target_include_directories(camera_view PRIVATE ${COMMON_SOURCE_DIR})
 
 # add lib dependencies
-target_link_libraries(camera_view
-                      dl
-                      android
-                      log
-                      m
-                      camera2ndk)
+target_link_libraries(camera_view dl android log m camera2ndk)

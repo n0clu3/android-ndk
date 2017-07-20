@@ -21,26 +21,30 @@ set(COMMON_SOURCE_DIR ${CMAKE_SOURCE_DIR}/../../../../common)
 
 # build native_app_glue as a static lib
 include_directories(${ANDROID_NDK}/sources/android/native_app_glue
-                    ${COMMON_SOURCE_DIR}
-                    ${COMMON_SOURCE_DIR}/utils)
+    ${COMMON_SOURCE_DIR}
+    ${COMMON_SOURCE_DIR}/utils)
 
 add_library(app_glue STATIC
-            ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
+    ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c)
 
 # now build app's shared lib
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror")
+# Export ANativeActivity_onCreate(),
+# Refer to: https://github.com/android-ndk/ndk/issues/381.
+set(CMAKE_SHARED_LINKER_FLAGS
+    "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
+
 add_library(camera_view SHARED
-            ${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/camera_manager.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/image_reader.cpp
-            ${COMMON_SOURCE_DIR}/utils/camera_utils.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/android_main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/camera_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/image_reader.cpp
+    ${COMMON_SOURCE_DIR}/utils/camera_utils.cpp)
 
 # add lib dependencies
 target_link_libraries(camera_view
-                      android
-                      log
-                      m
-                      app_glue
-                      camera2ndk
-                      mediandk)
+    android
+    log
+    m
+    app_glue
+    camera2ndk
+    mediandk)

@@ -161,7 +161,6 @@ void Engine::CreateCamera(void) {
     }
     LOGI("Phone Rotation: %d, Present Rotation Angle: %d",
          rotation_, imageRotation);
-
     ImageResolution res {0, 0, 0};
     androidCamera_->FindSupportedCaptureResolution(app_->window, &res);
 
@@ -337,9 +336,6 @@ extern "C" void android_main(struct android_app* state) {
 
     Engine engine(state);
     pEngineObj = &engine;
-
-    // Make sure glue isn't stripped.
-    app_dummy();
 
     state->userData = reinterpret_cast<void*>(&engine);
     state->onAppCmd = ProcessAndroidCmd;

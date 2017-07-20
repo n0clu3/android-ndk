@@ -333,8 +333,9 @@ void ImageReader::PresentImage180(ANativeWindow_Buffer* buf, AImage* image) {
 
         for (int x = 0; x < width; x++) {
             const int uv_offset = (x >> 1) * uvPixelStride;
-            // mirror image since we are using from camera
+            // mirror image since we are using front camera
             out[width - 1 - x] = YUV2RGB(pY[x], pU[uv_offset], pV[uv_offset]);
+            // out[x] = YUV2RGB(pY[x], pU[uv_offset], pV[uv_offset]);
         }
         out -= buf->stride;
     }
@@ -343,7 +344,7 @@ void ImageReader::PresentImage180(ANativeWindow_Buffer* buf, AImage* image) {
 /*
  * PresentImage270()
  *   Converting image from YUV to RGB
- *   Rotate Image counter-clockwise 270 degreee: (x, y) --> (y, -x)
+ *   Rotate Image counter-clockwise 270 degreee: (x, y) --> (y, x)
  */
 void ImageReader::PresentImage270(ANativeWindow_Buffer* buf, AImage* image) {
     int srcFormat = -1;
@@ -372,7 +373,6 @@ void ImageReader::PresentImage270(ANativeWindow_Buffer* buf, AImage* image) {
     int width = MIN(buf->height, (srcRect.right - srcRect.left));
 
     uint32_t *out = static_cast<uint32_t *>(buf->bits);
-    out += height - 1;
     for (int y = 0; y < height; y++) {
         const uint8_t *pY = yPixel + yStride * (y + srcRect.top) + srcRect.left;
 
@@ -383,8 +383,9 @@ void ImageReader::PresentImage270(ANativeWindow_Buffer* buf, AImage* image) {
         for (int x = 0; x < width; x++) {
             const int uv_offset = (x >> 1) * uvPixelStride;
             out[(width - 1 - x) * buf->stride] = YUV2RGB(pY[x], pU[uv_offset], pV[uv_offset]);
+
         }
-        out -= 1;  // move to the next column
+        out += 1;  // move to the next column
     }
 }
 void ImageReader::SetPresentRotation(int32_t angle) {
